@@ -35,6 +35,19 @@ func getAllRowData(conn *sql.DB) error {
 	return nil
 }
 
+// This function inserts new record to the table.
+func insertNewUser(conn *sql.DB, name string, email string, password string, uType int) error {
+	// create a query string
+	query := fmt.Sprintf(`INSERT INTO users (name, email, password, account_created, last_login, user_type) VALUES ('%s', '%s', '%s', current_timestamp, current_timestamp, %d)`, name, email, password, uType)
+
+	_, err := conn.Exec(query) // executes a query.
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
+}
+
 func main() {
 	// Connect to the database
 	conn, err := sql.Open("pgx", "host=localhost port=5432 dbname=blog_db user=postgres password=postgres")
@@ -56,4 +69,18 @@ func main() {
 	}
 
 	fmt.Println("-------------------------")
+
+	// function call to insert user to database
+	err = insertNewUser(conn, "Sally Smith", "ss@gmail.com", "weakpassword", 3)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = getAllRowData(conn) // check the table after inserting data.
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("-------------------------")
+
 }
