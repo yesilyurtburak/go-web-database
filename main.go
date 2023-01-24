@@ -70,6 +70,18 @@ func getUserData(conn *sql.DB, id int) error {
 	return nil
 }
 
+// This function updates the user email on the table.
+func updateUserEmail(conn *sql.DB, newEmail string, id int) error {
+	query := fmt.Sprintf(`UPDATE users SET email = '%s' WHERE id = %d`, newEmail, id)
+
+	_, err := conn.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
+}
+
 func main() {
 	// Connect to the database
 	conn, err := sql.Open("pgx", "host=localhost port=5432 dbname=blog_db user=postgres password=postgres")
@@ -107,6 +119,15 @@ func main() {
 
 	// Get a user data from the database by its id
 	getUserData(conn, 1)
+
+	fmt.Println("-------------------------")
+
+	// Update the email of a user.
+	err = updateUserEmail(conn, "yesilyurtburak@google.com", 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	getUserData(conn, 1) // check the spesific user's data.
 
 	fmt.Println("-------------------------")
 
