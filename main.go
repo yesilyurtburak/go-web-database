@@ -82,6 +82,17 @@ func updateUserEmail(conn *sql.DB, newEmail string, id int) error {
 	return nil
 }
 
+// This function deletes a record by its id.
+func deleteUserById(conn *sql.DB, id int) error {
+	query := fmt.Sprintf(`DELETE FROM users WHERE id = %d`, id)
+	_, err := conn.Exec(query)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	return nil
+}
+
 func main() {
 	// Connect to the database
 	conn, err := sql.Open("pgx", "host=localhost port=5432 dbname=blog_db user=postgres password=postgres")
@@ -131,4 +142,13 @@ func main() {
 
 	fmt.Println("-------------------------")
 
+	// delete the user by its id
+	err = deleteUserById(conn, 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = getAllRowData(conn) // check all information in the table
+	if err != nil {
+		log.Fatal(err)
+	}
 }
