@@ -48,6 +48,28 @@ func insertNewUser(conn *sql.DB, name string, email string, password string, uTy
 	return nil
 }
 
+// This function retrieves a record from the table by using its id number.
+func getUserData(conn *sql.DB, id int) error {
+	var name, email, password, uType string // variables that will store the retrieved data
+	// create a query string
+	query := fmt.Sprintf(`SELECT id, name, email, password, user_type FROM users WHERE id = %d`, id)
+	// QueryRow() is expected to return at most 1 row.
+	row := conn.QueryRow(query)
+	// Scan() copies the retrieved data into destination.
+	err := row.Scan(&id, &name, &email, &password, &uType)
+
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	fmt.Println("ID:", id)
+	fmt.Println("Name:", name)
+	fmt.Println("Email:", email)
+	fmt.Println("Password:", password)
+	fmt.Println("User Type:", uType)
+	return nil
+}
+
 func main() {
 	// Connect to the database
 	conn, err := sql.Open("pgx", "host=localhost port=5432 dbname=blog_db user=postgres password=postgres")
@@ -80,6 +102,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Println("-------------------------")
+
+	// Get a user data from the database by its id
+	getUserData(conn, 1)
 
 	fmt.Println("-------------------------")
 
